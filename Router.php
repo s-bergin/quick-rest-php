@@ -1,11 +1,13 @@
 <?php
 namespace QuickRest;
 
+include("Route.php");
+
 class Router{
 
     /**
      * Our routes store 
-     * @var array
+     * @var array $routes
      */
     private $routes = [
         "GET"=>[], 
@@ -31,12 +33,9 @@ class Router{
         
         // iterate through the provided request methods and add the uri and callback to router 
         foreach($requestMethods as $r){
-            $tmpObj = [
-                "URI" => $uri, 
-                "CALLBACK" => $callback
-            ];
+            $route = new Route($uri, $callback);
 
-            $this->routes[$r][] = $tmpObj; 
+            $this->routes[$r][] = $route; 
         }
     }
 
@@ -47,6 +46,8 @@ class Router{
      * 
      * @param String $requestMethod
      * @param String $uri
+     * 
+     * @return Route 
      */
     private function search($requestMethod, $uri){
         $routesPerRequestMethod = $this->routes[$requestMethod];
@@ -60,7 +61,7 @@ class Router{
         foreach($routesPerRequestMethod as $r){
             
             // get the uri elements for each $r
-            $routeUriElements = explode("/", $r["URI"]);
+            $routeUriElements = explode("/", $r->getUri());
 
             // check does the routeUriElements match the requestUriElements
             if($routeUriElements[1] == $requestUriElements[1] && 

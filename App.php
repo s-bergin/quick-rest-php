@@ -61,7 +61,7 @@ class App{
     public function run(){
         $route = $this->router->get();
 
-        $route["CALLBACK"]();
+        $route->getCallback()(); 
     }
 }
 ?>
