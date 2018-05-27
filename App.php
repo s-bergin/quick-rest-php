@@ -9,6 +9,8 @@
 namespace QuickRest; 
 
 include("Router.php");
+include("Request.php");
+include("RequestBuilder.php");
 
 class App{
 
@@ -17,8 +19,24 @@ class App{
      */
     private $router; 
 
+    /**
+     * @var Request $request
+     */
+    private $request;
+
+    /**
+     * @var RequestBuilder $requestBuilder
+     */
+    private $requestBuilder;
+
+    /**
+     * @var Response $response
+     */
+    private $response;
+ 
     public function __construct(){
         $this->router = new Router(); 
+        $this->requestBuilder = new RequestBuilder();
     }
 
     /****************
@@ -56,12 +74,16 @@ class App{
      * 
      * Handle the HTTP request
      * 
-     * 
      */
     public function run(){
         $route = $this->router->get();
 
-        $route->getCallback()(); 
+        $this->requestBuilder->build($route);
+
+        $request = "";
+        
+        $callback = $route->getCallback();
+        $callback($request);
     }
 }
 ?>
