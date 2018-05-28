@@ -76,12 +76,14 @@ class App{
      * 
      */
     public function run(){
-        $route = $this->router->get();
-
-        $this->requestBuilder->build($route);
-
-        $request = "";
         
+        $route = $this->router->validateRequestedRoute($this->requestBuilder);
+        // $this->requestBuilder->build($route);
+
+        
+        return null; 
+        $request = "";
+
         $callback = $route->getCallback();
         $callback($request);
     }
