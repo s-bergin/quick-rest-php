@@ -2,12 +2,13 @@
 namespace QuickRest;
 
 include("Route.php");
+include("RouteNotImplementedException.php");
 
 class Router{
 
     /**
      * Our routes store 
-     * @var array $routes
+     * @var Array $routes
      */
     private $routes = [
         "GET"=>[], 
@@ -43,6 +44,8 @@ class Router{
      * ensure that the uri a user requests is a valid route 
      * 
      * @param RequestBuilder $requestBuilder
+     * 
+     * @throws RouteNotImplementedException 
      * 
      * @return Route 
      */
@@ -83,9 +86,8 @@ class Router{
                             
                             $requestBuilder->addToParam($paramKey, $tmpRequestUriElement);
                         }else{
-                            if($tmpRouteUriElement !== $tmpRequestUriElement){
-                                // TODO - Throw route not implemented error here instead 
-                                break; 
+                            if($tmpRouteUriElement !== $tmpRequestUriElement){ 
+                                throw new RouteNotImplementedException();
                             }
                         }
                     }
@@ -94,7 +96,7 @@ class Router{
                 $route = $r; 
                 break; // break we have the matching  route 
             }else{
-                // TODO - Throw route not implemented error here instead
+                throw new RouteNotImplementedException();
             }
         }
 

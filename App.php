@@ -77,21 +77,25 @@ class App{
      * 
      */
     public function run(){
-        
-        $route = $this->router->validateRequestedRoute($this->requestBuilder);
-        
-        // serve request object
-        $this->requestBuilder->setQuery();
-        $requestParams = $this->requestBuilder->getParam();
-        $requestQuery = $this->requestBuilder->getQuery();
-        $this->request = new Request($requestParams, $requestQuery);
-
         // server response object 
         $requestMethod = $this->requestBuilder->getRequestMethod();
         $this->response = new Response($requestMethod);
 
-        $callback = $route->getCallback();
-        $callback($this->request, $this->response);
+        try{
+            $route = $this->router->validateRequestedRoute($this->requestBuilder);
+
+            // serve request object
+            $this->requestBuilder->setQuery();
+            $requestParams = $this->requestBuilder->getParam();
+            $requestQuery = $this->requestBuilder->getQuery();
+            $this->request = new Request($requestParams, $requestQuery);
+
+            $callback = $route->getCallback();
+            $callback($this->request, $this->response);
+        }catch(RouteNotImplementedException $e){
+            $this->response->statusCode(404)->json($e->getMessage()); 
+        }
+        
     }
 }
 ?>

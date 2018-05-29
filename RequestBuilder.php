@@ -38,10 +38,15 @@ class RequestBuilder{
     public function setQuery($query = NULL){
         if(!$query){
             $query = $_SERVER['QUERY_STRING'];
-            $query = $this->getQueryStringAsArray($query);
+
+            if($query !== ""){
+                $query = $this->getQueryStringAsArray($query);
+            }
         }
         
-        $this->query = $query;
+        if($query){
+            $this->query = $query;
+        }
     }
 
     /**
