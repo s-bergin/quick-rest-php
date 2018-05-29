@@ -100,6 +100,11 @@ class Router{
             }
         }
 
+        // ensure exception if route doesnt exist 
+        if(!$route){
+            throw new RouteNotImplementedException();
+        }
+
         return $route;
     }
 
