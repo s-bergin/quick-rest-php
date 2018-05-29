@@ -78,11 +78,8 @@ class App{
     public function run(){
         
         $route = $this->router->validateRequestedRoute($this->requestBuilder);
-        // $this->requestBuilder->build($route);
-
-        
+        //$this->requestBuilder->setQuery();
         return null; 
-        $request = "";
 
         $callback = $route->getCallback();
         $callback($request);

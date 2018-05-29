@@ -13,7 +13,7 @@ class RequestBuilder{
     /**
      * @var Array $query
      */ 
-    private $query;
+    private $query = NULL;
 
     public function __construct(){
 
@@ -32,6 +32,18 @@ class RequestBuilder{
      */
     public function getParams(){
         return $this->params;
+    }
+
+    /**
+     * @param Array $query 
+     */
+    public function setQuery($query = NULL){
+        echo $_SERVER['QUERY_STRING'];
+        if(!$query){
+            echo $_SERVER['QUERY_STRING'];
+        }else{
+            $this->query = $query;
+        }
     }
 
     /**
@@ -82,7 +94,7 @@ class RequestBuilder{
      * @return String
      */
     public function getRequestUri(){
-        return $_SERVER['PATH_INFO'];
+        return $_SERVER["PATH_INFO"];
     }
 
     /**

@@ -40,71 +40,6 @@ class Router{
     }
 
     /**
-     * search()
-     * 
-     * search our routes to check if requested route exists 
-     * 
-     * @param String $requestMethod
-     * @param String $uri
-     * 
-     * @return Route 
-     */
-    private function search($requestMethod, $uri){
-        $routesPerRequestMethod = $this->routes[$requestMethod];
-
-        // get our request uri elements, these will be used to check does requested uri exist
-        $requestUriElements = explode("/", $uri);
-
-        $route = NULL; 
-
-        // iterate through our routesPerRequestMethod and see if there is a matching uri 
-        foreach($routesPerRequestMethod as $r){
-            
-            // get the uri elements for each $r
-            $rUri = $r->getUri();
-            $routeUriElements = explode("/", trim($rUri, "/"));
-
-            // check does the routeUriElements match the requestUriElements
-            if($routeUriElements[0] == $requestUriElements[0] && 
-                count($routeUriElements) == count($requestUriElements)){
-
-                    if(count($routeUriElements) > 1){
-                        for($i = 1; $i <= count($routeUriElements); $i++){
-                            $tmpRouteUri = $routeUriElements[$i];
-                            echo $tmpRouteUri[0];
-
-                            
-                        }
-                    }else{
-                        
-                        $route = $r; 
-                        break;
-                    }
-            }
-        }
-
-        return $route; 
-    }
-
-
-    /**
-     * get()
-     * 
-     * get a route from our routes store 
-     * 
-     */
-    public function get(){
-        
-        $requestMethod = $_SERVER['REQUEST_METHOD'];
-        $uri = $_SERVER['PATH_INFO'];
-
-        return $this->search($requestMethod, $uri);
-    }
-
-    /**
-     * 
-     * TODO - CLEAN UP THIS CODE AND MIGRATE FUNCTIONALITY TO REQUEST BUILDER 
-     * 
      * ensure that the uri a user requests is a valid route 
      * 
      * @param RequestBuilder $requestBuilder
@@ -128,23 +63,27 @@ class Router{
             $routeUriElements = $requestBuilder->getRequestedUriElements($routeUri);
 
             // check does the routeUriElements match the requestUriElements
-            if($routeUriElements[0] == $requestUriElements[0] && count($routeUriElements) == count($requestUriElements)){
+            $uriElementsMatch = $this->checkRouteUriMatchesRequestUri($routeUriElements, $requestUriElements);
+            if($uriElementsMatch){
                     
                 // if the user passes some additional uri request params 
-                if(count($requestUriElements) > 1){
+                $requestUriContainsParameters = $this->checkRequestUriContainsParameters($requestUriElements);
+                if($requestUriContainsParameters){
 
                     for($i = 1; $i < count($routeUriElements); $i++){
-                        $tmpRouteUri = $routeUriElements[$i];
-                        $tmpRequestUri = $requestUriElements[$i];
+                        $tmpRouteUriElement = $routeUriElements[$i];
+                        $tmpRequestUriElement = $requestUriElements[$i];
                         
-                        // check if it is deliminated value 
-                        if($tmpRouteUri[0] == "{" && $tmpRouteUri[-1] == "}"){
+                        // check if uri element is a parameter
+                        $routeUriElementIsParameter = $this->checkIfUriElementIsParameter($tmpRouteUriElement);
+                        
+                        if($routeUriElementIsParameter){
                             // get the param key(name)
-                            $paramKey = substr($tmpRouteUri, 1, -1);
+                            $paramKey = $this->getParameterKeyFromUriElement($tmpRouteUriElement);
                             
-                            $requestBuilder->addToParams($paramKey, $tmpRequestUri);
+                            $requestBuilder->addToParams($paramKey, $tmpRequestUriElement);
                         }else{
-                            if($tmpRouteUri !== $tmpRequestUri){
+                            if($tmpRouteUriElement !== $tmpRequestUriElement){
                                 // TODO - Throw route not implemented error here instead 
                                 break; 
                             }
@@ -160,6 +99,61 @@ class Router{
         }
 
         return $route;
+    }
+
+    /**
+     * @param Array[String] $routeUriElements
+     * @param Array[String] $requestUriElements
+     * 
+     * @return BOOL
+     */
+    private function checkRouteUriMatchesRequestUri($routeUriElements, $requestUriElements){
+        if($routeUriElements[0] == $requestUriElements[0] && 
+            count($routeUriElements) == count($requestUriElements)){
+                return TRUE;
+        }
+        
+        return FALSE;
+    }
+
+    /**
+     * @param Array $requestUriElements
+     * 
+     * @return BOOL
+     */
+    private function checkRequestUriContainsParameters($requestUriElements){
+        if(count($requestUriElements) > 1){
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    /**
+     * check if a uri element is a parameter, parameters are determined by being 
+     * enclosed by '{}'
+     * 
+     * @param String $uriElement
+     * 
+     * @return Bool
+     */
+    private function checkIfUriElementIsParameter($uriElement){
+        if($uriElement[0] == "{" && $uriElement[-1] == "}"){
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    /**
+     * get the paramater key(name) from a uri element
+     * 
+     * @param String $uriElement
+     * 
+     * @return String 
+     */
+    private function getParameterKeyFromUriElement($uriElement){
+        return substr($uriElement, 1, -1);
     }
 
     /**
