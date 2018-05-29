@@ -4,9 +4,9 @@ namespace QuickRest;
 class Request{
 
     /**
-     * @var Array $params
+     * @var Array $param
      */
-    public $params;
+    public $param;
 
     /**
      * @var Array $query 
@@ -14,11 +14,11 @@ class Request{
     public $query; 
 
     /**
-     * @param Array $params
+     * @param Array $param
      * @param Array $query 
      */
-    public function __construct($params, $query){
-        $this->params = $params; 
+    public function __construct($param, $query){
+        $this->param = $param; 
         $this->query = $query; 
     }
 }

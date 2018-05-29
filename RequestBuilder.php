@@ -3,12 +3,10 @@ namespace QuickRest;
 
 class RequestBuilder{
 
-    public $test; 
-
     /**
-     * @var Array $params
+     * @var Array $param
      */
-    private $params = [];
+    private $param = [];
 
     /**
      * @var Array $query
@@ -23,64 +21,51 @@ class RequestBuilder{
      * @param String $key
      * @param Value $value
      */
-    public function addToParams($key, $value){
-        $this->params[$key] = $value;
+    public function addToParam($key, $value){
+        $this->param[$key] = $value;
     }
 
     /**
      * @return Array
      */
-    public function getParams(){
-        return $this->params;
+    public function getParam(){
+        return $this->param;
     }
 
     /**
      * @param Array $query 
      */
     public function setQuery($query = NULL){
-        echo $_SERVER['QUERY_STRING'];
         if(!$query){
-            echo $_SERVER['QUERY_STRING'];
-        }else{
-            $this->query = $query;
+            $query = $_SERVER['QUERY_STRING'];
+            $query = $this->getQueryStringAsArray($query);
         }
+        
+        $this->query = $query;
     }
 
     /**
-     * build() , build our params and query vars
-     * 
-     * @param Route $route
+     * @return Array
      */
-    public function build(Route $route){
-        $this->buildParams($route);
+    public function getQuery(){
+        return $this->query; 
     }
 
     /**
-     * buildParams()
+     * @param String $queryString
      * 
-     * @param Route $route
+     * @return Array
      */
-    public function buildParams(Route $route){
-        $requestedUri = $_SERVER["PATH_INFO"];
-        $requestUriArray = explode("/", trim($requestedUri, "/"));
-
-        $routeUri = $route->getUri();
-        $routeUriArray = explode("/", trim($routeUri, "/"));
-
-        $tmpParamsObj = [];
-
-        // if data exists in uri past base uri, take each index from the route uri and match it to value in request uri
-        if(count($routeUriArray) > 1){     
-            for($i = 1; $i <= count($routeUriArray); $i++){
-
-            }
+    private function getQueryStringAsArray($queryString){
+        $query = explode("&", trim($queryString, "&"));
+        
+        $queryArray = []; 
+        foreach($query as $q){
+            $tmpArray = explode("=", trim($q, "="));
+            $queryArray[$tmpArray[0]] = $tmpArray[1];
         }
 
-        $this->params = $tmpParamsObj;
-    }
-
-    public function buildQuery(){
-
+        return $queryArray; 
     }
 
     /**

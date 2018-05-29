@@ -81,7 +81,7 @@ class Router{
                             // get the param key(name)
                             $paramKey = $this->getParameterKeyFromUriElement($tmpRouteUriElement);
                             
-                            $requestBuilder->addToParams($paramKey, $tmpRequestUriElement);
+                            $requestBuilder->addToParam($paramKey, $tmpRequestUriElement);
                         }else{
                             if($tmpRouteUriElement !== $tmpRequestUriElement){
                                 // TODO - Throw route not implemented error here instead 
@@ -153,6 +153,7 @@ class Router{
      * @return String 
      */
     private function getParameterKeyFromUriElement($uriElement){
+        // parameters will be enclosed by {}
         return substr($uriElement, 1, -1);
     }
 

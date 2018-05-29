@@ -11,6 +11,7 @@ namespace QuickRest;
 include("Router.php");
 include("Request.php");
 include("RequestBuilder.php");
+include("Response.php");
 
 class App{
 
@@ -78,11 +79,19 @@ class App{
     public function run(){
         
         $route = $this->router->validateRequestedRoute($this->requestBuilder);
-        //$this->requestBuilder->setQuery();
-        return null; 
+        
+        // serve request object
+        $this->requestBuilder->setQuery();
+        $requestParams = $this->requestBuilder->getParam();
+        $requestQuery = $this->requestBuilder->getQuery();
+        $this->request = new Request($requestParams, $requestQuery);
+
+        // server response object 
+        $requestMethod = $this->requestBuilder->getRequestMethod();
+        $this->response = new Response($requestMethod);
 
         $callback = $route->getCallback();
-        $callback($request);
+        $callback($this->request, $this->response);
     }
 }
 ?>
