@@ -13,6 +13,11 @@ class RequestBuilder{
      */ 
     private $query = NULL;
 
+    /**
+     * @var Array $body 
+     */
+    private $body = [];
+
     public function __construct(){
 
     }
@@ -54,6 +59,26 @@ class RequestBuilder{
      */
     public function getQuery(){
         return $this->query; 
+    }
+
+    /**
+     * @param Array $body
+     */
+    public function setBody($body = NULL){
+        if(!$body){
+            $body = json_decode(file_get_contents('php://input'), true);
+        }
+
+        if($body){
+            $this->body = $body; 
+        }
+    }
+
+    /**
+     * @return Array
+     */
+    public function getBody(){
+        return $this->body; 
     }
 
     /**

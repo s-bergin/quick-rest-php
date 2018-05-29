@@ -55,6 +55,36 @@ class App{
     }
 
     /**
+     * POST 
+     * 
+     * @param String $uri - The URI pattern for initialised route
+     * @param Function $callback - Functionality for specified route  
+     */
+    public function post($uri, $callback){
+        $this->map(['POST'], $uri, $callback);
+    }
+
+    /**
+     * PUT 
+     * 
+     * @param String $uri - The URI pattern for initialised route
+     * @param Function $callback - Functionality for specified route  
+     */
+    public function put($uri, $callback){
+        $this->map(['PUT'], $uri, $callback);
+    }
+
+    /**
+     * DELETE 
+     * 
+     * @param String $uri - The URI pattern for initialised route
+     * @param Function $callback - Functionality for specified route  
+     */
+    public function delete($uri, $callback){
+        $this->map(['DELETE'], $uri, $callback);
+    }
+
+    /**
      * MAP
      * 
      * map the initialised route to our router
@@ -86,9 +116,11 @@ class App{
 
             // serve request object
             $this->requestBuilder->setQuery();
+            $this->requestBuilder->setBody();
             $requestParams = $this->requestBuilder->getParam();
             $requestQuery = $this->requestBuilder->getQuery();
-            $this->request = new Request($requestParams, $requestQuery);
+            $requestBody = $this->requestBuilder->getBody(); 
+            $this->request = new Request($requestParams, $requestQuery, $requestBody);
 
             $callback = $route->getCallback();
             $callback($this->request, $this->response);
